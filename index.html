@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>API</title>
+        <link rel="stylesheet" type="text/css" href="./style.css" />
+        <script type="module">
+            let map;
+            let service;
+            let infowindow;
+
+            window.initMap = function initMap() {
+                // 福岡全域の中心の座標指定
+                const fukuoka = new google.maps.LatLng(33.45, 130.55);
+                infowindow = new google.maps.InfoWindow();
+                map = new google.maps.Map(document.getElementById("map"), {
+                    // 福岡全域を表示
+                    center: fukuoka,
+                    zoom: 10,
+                    // 九州全体を表示するためにズームレベルを調整
+                });
+                // ポケフタの場所の座標
+                const girugaido = { lat: 33.3018, lng: 130.3059 };
+                marker = new google.maps.Marker({
+                    map,
+                    position: girugaido,
+                    icon: "BBA1.png",
+                });
+
+                // google.maps.event.addListener(marker, "click", () => {
+                //     infowindow.setContent(place.name);
+                //     infowindow.open(map, marker);
+                // });
+            };
+        </script>
+    </head>
+    <body>
+        <div id="map"></div>
+
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKK8MQYXChRqq_7_bfybIc6YCWtmYzOsw&callback=initMap&libraries=places&v=weekly"
+            defer
+        ></script>
+    </body>
+</html>
