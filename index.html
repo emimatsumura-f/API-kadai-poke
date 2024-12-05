@@ -5,41 +5,189 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>API</title>
         <link rel="stylesheet" type="text/css" href="./style.css" />
-        <script type="module">
-            let map;
-            let service;
-            let infowindow;
-
-            window.initMap = function initMap() {
-                // 福岡全域の中心の座標指定
-                const fukuoka = new google.maps.LatLng(33.45, 130.55);
-                infowindow = new google.maps.InfoWindow();
-                map = new google.maps.Map(document.getElementById("map"), {
-                    // 福岡全域を表示
-                    center: fukuoka,
-                    zoom: 10,
-                    // 九州全体を表示するためにズームレベルを調整
-                });
-                // ポケフタの場所の座標
-                const girugaido = { lat: 33.3018, lng: 130.3059 };
-                marker = new google.maps.Marker({
-                    map,
-                    position: girugaido,
-                    icon: "BBA1.png",
-                });
-
-                // google.maps.event.addListener(marker, "click", () => {
-                //     infowindow.setContent(place.name);
-                //     infowindow.open(map, marker);
-                // });
-            };
-        </script>
+        <script type="module" src="./index.js"></script>
     </head>
     <body>
-        <div id="map"></div>
+        <!-- 地図の中心座標設定 -->
+        <gmp-map
+            center="33.720131571299695,130.69691562773556"
+            zoom="11"
+            map-id="pokeMAP_ID"
+            style="height: 1000px"
+        >
+            <gmp-advanced-marker
+                position="33.5058967919526,130.51661391534594"
+                title="すごい、剣のポケモンだ！"
+                id="marker-1"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.52016101233389,130.53124325396215"
+                title="不思議で神秘的だね！"
+                id="marker-2"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.513925384199275,130.51513108465406"
+                title="かわいい！きれい！"
+                id="marker-3"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.957793337684656,130.96178166138378"
+                title="南国のポケモン！"
+                id="marker-4"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.947050416223455,130.96416191534595"
+                title="月の化身みたいだ！"
+                id="marker-5"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.872343294871726,130.8073233386162"
+                title="バトルで使ってみたいな！"
+                id="marker-6"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.891044549608054,130.88456608465407"
+                title="どっちも地下の住人かな？"
+                id="marker-7"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+
+            <gmp-advanced-marker
+                position="33.88564108835018,130.69691562773556"
+                title="絶対防御力高いでしょ！"
+                id="marker-8"
+                style="cursor: pointer"
+            ></gmp-advanced-marker>
+        </gmp-map>
+
+        <div class="container">
+            <h1>ポケモン検索アプリ</h1>
+            <div class="search-bar">
+                <input
+                    type="text"
+                    id="pokemon-input"
+                    placeholder="ポケモンの名前またはIDを入力"
+                />
+                <button id="search-button">検索</button>
+            </div>
+            <div id="pokemon-info" class="pokemon-info">
+                <!-- ポケモン情報がここに表示されます -->
+            </div>
+        </div>
+
+        <script>
+            document
+                .getElementById("search-button")
+                .addEventListener("click", function () {
+                    const input = document
+                        .getElementById("pokemon-input")
+                        .value.toLowerCase();
+                    const apiUrl = `https://pokeapi.co/api/v2/pokemon/${input}`;
+
+                    fetch(apiUrl)
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(
+                                    "ポケモンが見つかりませんでした。"
+                                );
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            displayPokemonInfo(data);
+                        })
+                        .catch((error) => {
+                            document.getElementById(
+                                "pokemon-info"
+                            ).innerHTML = `<p>${error.message}</p>`;
+                        });
+                });
+
+            function displayPokemonInfo(pokemon) {
+                const pokemonInfoDiv = document.getElementById("pokemon-info");
+                const types = pokemon.types
+                    .map((typeInfo) => typeInfo.type.name)
+                    .join(", ");
+                const abilities = pokemon.abilities
+                    .map((abilityInfo) => abilityInfo.ability.name)
+                    .join(", ");
+                const height = pokemon.height / 10;
+                const weight = pokemon.weight / 10;
+
+                pokemonInfoDiv.innerHTML = `
+        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+        <div>
+            <p>ID: ${pokemon.id}</p>
+            <p>名前: ${pokemon.name}</p>
+            <p>タイプ: ${types}</p>
+            <p>高さ: ${height}m</p>
+            <p>重さ: ${weight}kg</p>
+            <p>能力: ${abilities}</p>
+        </div>
+    `;
+            }
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const markers = [
+                    {
+                        elementId: "marker-1",
+                        url: "https://local.pokemon.jp/manhole/desc/317/",
+                    },
+                    {
+                        elementId: "marker-2",
+                        url: "https://local.pokemon.jp/manhole/desc/316/",
+                    },
+                    {
+                        elementId: "marker-3",
+                        url: "https://local.pokemon.jp/manhole/desc/315/",
+                    },
+                    {
+                        elementId: "marker-4",
+                        url: "https://local.pokemon.jp/manhole/desc/202/",
+                    },
+                    {
+                        elementId: "marker-5",
+                        url: "https://local.pokemon.jp/manhole/desc/201/",
+                    },
+                    {
+                        elementId: "marker-6",
+                        url: "https://local.pokemon.jp/manhole/desc/200/",
+                    },
+                    {
+                        elementId: "marker-7",
+                        url: "https://local.pokemon.jp/manhole/desc/199/",
+                    },
+                    {
+                        elementId: "marker-8",
+                        url: "https://local.pokemon.jp/manhole/desc/198/",
+                    },
+                ];
+
+                markers.forEach((marker) => {
+                    const element = document.getElementById(marker.elementId);
+                    element.addEventListener("click", function () {
+                        window.location.href = marker.url;
+                    });
+                });
+            });
+        </script>
 
         <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKK8MQYXChRqq_7_bfybIc6YCWtmYzOsw&callback=initMap&libraries=places&v=weekly"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKK8MQYXChRqq_7_bfybIc6YCWtmYzOsw&libraries=maps,marker&v=beta"
             defer
         ></script>
     </body>
